@@ -57,7 +57,7 @@ class PermissionManager:Activity(), IPermissionManager {
         }
     }
 
-  /*override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) {
+  override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             Constants.PERMISSION_REQUEST_CODE -> {
@@ -84,52 +84,9 @@ class PermissionManager:Activity(), IPermissionManager {
                 }
             }
         }
-    }*/
-
-    // handle permission result
-       override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray)
-        {
-         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-         when (requestCode) {
-             Constants.PERMISSION_REQUEST_CODE -> {
-                // var gotAllPermission = true
-                 if (permissionsNeeded.size > 0)
-                 {
-                     for (i in 0 until permissionsNeeded.size)
-                     {
-                         //Assigning the permissions[i] to string of permission
-                         //TODO to check why the string permission is not allowed in shouldShowRequestPermissionRationale(deniedpermission)
-                         String deniedpermission = permissions[i]
-                         if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M || (checkSelfPermission(permissionsNeeded.get(i)) !== PackageManager.PERMISSION_GRANTED)))
-                         {
-                             //passing the string permission
-                             if (shouldShowRequestPermissionRationale(deniedpermission)) {
-                                 showMessageOKCancel("You need to allow access to both the permissions",
-                                     DialogInterface.OnClickListener { dialog, which ->
-                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                             ActivityCompat.requestPermissions(this, askPermission.toArray(arrayOfNulls<String>(askPermission.size)),Constants.PERMISSION_REQUEST_CODE)
-                                         }
-                                     })
-                                 return
-                             }
-
-                         }
-                     }
-
-                 }
-             }
-         }
-     }
-    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-        AlertDialog.Builder(this)
-            .setMessage(message)
-            .setPositiveButton("OK", okListener)
-            .setNegativeButton("Cancel", null)
-            .create()
-            .show()
     }
-}
 
+  
 
 
 
