@@ -9,7 +9,7 @@ class PermissionsInit(@NonNull context: Activity, @NonNull permissions:List<Stri
     init{
         val intent = Intent()
         intent.setClass(context, PermissionManager::class.java)
-        intent.putExtra(constants.PERMISSION_LIST, permissions)
-        context.startActivityForResult(intent, constants.INTENT_CODE)
+        intent.putExtra(Constants.PERMISSION_LIST, permissions)
+        context.startActivityForResult(intent, Constants.INTENT_CODE)
     }
 }
