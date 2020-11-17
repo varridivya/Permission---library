@@ -86,7 +86,7 @@ class PermissionManager:Activity(), IPermissionManager {
         }
     }*/
 
-    // handle permission result
+    // handle permissions result
        override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray)
         {
          super.onRequestPermissionsResult(requestCode, permissions, grantResults)
