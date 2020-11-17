@@ -1,6 +1,5 @@
 package com.hcl.permissionslibrary
-//TODO follow standards
-object constants {
+object Constants {
     val INTENT_CODE = 100
     val PERMISSION_REQUEST_CODE = 101
 
