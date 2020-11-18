@@ -1,6 +1,7 @@
 package com.hcl.permissionslibrary
 import android.Manifest
 import android.app.Activity
+import android.app.PendingIntent.getActivity
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import java.io.Serializable
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import com.google.android.material.snackbar.Snackbar
 import java.util.Collection
 
 
@@ -40,6 +42,7 @@ class PermissionManager:Activity(), IPermissionManager {
                 }
             }
         } else {
+            Toast.makeText(this,"permission Granted",Toast.LENGTH_SHORT).show()
             finish()
             //onPermissionGranted(pemissionsNeeded)
             //TODO check whether finish is ending abruptly
@@ -56,37 +59,53 @@ class PermissionManager:Activity(), IPermissionManager {
             finish()
         }
     }
-
-  override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) {
+    
+    // handle permission result
+   override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             Constants.PERMISSION_REQUEST_CODE -> {
-                var gotAllPermission = true
-                if (permissionsNeeded.size > 0)
-                {
-                    val deniedPermissions = ArrayList<String>()
-                    for (i in 0 until permissionsNeeded.size)
-                    {
-                        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M || (checkSelfPermission(permissionsNeeded.get(i)) !== PackageManager.PERMISSION_GRANTED)))
-                        {
-                            gotAllPermission = false
-                            deniedPermissions.add(permissionsNeeded.get(i))
+                //var gotAllPermission = false
+                if (grantResults.size > 0 && permissions.size == grantResults.size) {
+                    for (i in permissions.indices) {
+                        var permission = permissions[i]
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(this, " Granted", Toast.LENGTH_SHORT).show()
                         }
+                        else {
+                            if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M || (checkSelfPermission(permissionsNeeded.get(i)) !== PackageManager.PERMISSION_GRANTED)))
+                            {
+                                //passing the string permission
+                                if (shouldShowRequestPermissionRationale(permission))
+                                {
+                                    showMessageOKCancel("You need to allow access to both the permissions",
+                                        DialogInterface.OnClickListener { dialog, which ->
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                                            {
+                                                ActivityCompat.requestPermissions(this, askPermission.toArray(arrayOfNulls<String>(askPermission.size)), Constants.PERMISSION_REQUEST_CODE)
+                                            }
+                                        })
+                                    return
+                                }
+
+                            }
+                        }
+
                     }
-                    val intent = Intent()
-                    intent.putExtra(Constants.IS_GOT_ALL_PERMISSION, gotAllPermission)
-                    if (deniedPermissions.size > 0)
-                    {
-                        intent.putExtra(Constants.DENIED_PERMISSION_LIST,deniedPermissions as Serializable)
-                    }
-                    setResult(Constants.INTENT_CODE, intent)
-                    finish()
                 }
             }
         }
     }
+    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+        AlertDialog.Builder(this)
+            .setMessage(message)
+            .setPositiveButton("OK", okListener)
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show()
+    }
+}
 
-  
 
 
 
